@@ -1,0 +1,607 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPMASTERS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --deep-blue: #E9EE20;
+      --light-blue: #40D471;
+      --slate: #BCF9E0;
+      --light-slate: #BC50B9;
+      --white: #F788FF;
+      --navy-shadow: rgba(2, 12, 27, 0.7);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--deep-blue);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.light-theme {
+      --deep-blue: #F79BDB;
+      --light-blue: #32265A;
+      --slate: #32265A;
+      --light-slate: #32265A;
+      --white: #32265A;
+      --navy-shadow: rgba(210, 220, 230, 0.7);
+      background-color: var(--deep-blue);
+    }
+
+    /* Popup Styles */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+      padding: 1rem;
+    }
+
+    .popup-content {
+      background: var(--deep-blue);
+      padding: 1.5rem;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid var(--light-blue);
+      box-shadow: 0 10px 30px var(--navy-shadow);
+      position: relative;
+    }
+
+    body.light-theme .popup-content {
+      background: var(--deep-blue);
+      border: 1px solid var(--light-blue);
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: transparent;
+      border: none;
+      color: var(--light-blue);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .popup-close:hover {
+      transform: rotate(90deg);
+    }
+
+    .popup-title {
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--light-blue);
+      margin-bottom: 1rem;
+      text-align: center;
+      font-size: 1.3rem;
+    }
+
+    .popup-message {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .channel-list {
+      margin: 1rem 0;
+    }
+
+    .channel-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      padding: 0.7rem;
+      background: rgba(100, 255, 218, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    body.light-theme .channel-item {
+      background: rgba(0, 122, 122, 0.05);
+      border: 1px solid rgba(0, 122, 122, 0.1);
+    }
+
+    .channel-icon {
+      margin-right: 0.8rem;
+      color: var(--light-blue);
+      font-size: 1.1rem;
+    }
+
+    .channel-link {
+      color: var(--light-blue);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      word-break: break-all;
+      font-size: 0.9rem;
+    }
+
+    .channel-link:hover {
+      text-decoration: underline;
+    }
+
+    .popup-note {
+      font-size: 0.85rem;
+      color: var(--slate);
+      text-align: center;
+      margin-top: 0.8rem;
+      font-style: italic;
+    }
+
+    /* Main Container */
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(10, 25, 47, 0.85);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px var(--navy-shadow);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(100, 255, 218, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    body.light-theme .container {
+      background: rgba(240, 244, 248, 0.85);
+      border: 1px solid rgba(0, 122, 122, 0.1);
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, var(--light-blue), var(--white));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--light-blue);
+      color: var(--light-blue);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(100, 255, 218, 0.1);
+      transform: rotate(30deg);
+    }
+
+    body.light-theme .theme-toggle {
+      border-color: var(--light-blue);
+      color: var(--light-blue);
+    }
+
+    /* Search */
+    .search-container {
+      margin-bottom: 1.5rem;
+    }
+
+    .search-bar {
+      display: flex;
+      background: rgba(100, 255, 218, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(100, 255, 218, 0.2);
+    }
+
+    body.light-theme .search-bar {
+      background: rgba(0, 122, 122, 0.1);
+      border: 1px solid rgba(0, 122, 122, 0.2);
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      background: transparent;
+      border: none;
+      color: var(--white);
+      font-size: 0.95rem;
+    }
+
+    body.light-theme .search-bar input {
+      color: var(--white);
+    }
+
+    .search-bar input::placeholder {
+      color: var(--slate);
+    }
+
+    .search-bar button {
+      padding: 0 1.2rem;
+      background: var(--light-blue);
+      color: var(--deep-blue);
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.25s ease;
+    }
+
+    body.light-theme .search-bar button {
+      background: var(--light-blue);
+      color: white;
+    }
+
+    .search-bar button:hover {
+      background: #52d3b8;
+    }
+
+    /* Card */
+    .card {
+      background: rgba(100, 255, 218, 0.03);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(100, 255, 218, 0.1);
+      transition: all 0.25s ease;
+    }
+
+    body.light-theme .card {
+      background: rgba(0, 122, 122, 0.03);
+      border: 1px solid rgba(0, 122, 122, 0.1);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--light-blue);
+      box-shadow: 0 10px 20px rgba(100, 255, 218, 0.1);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      color: var(--light-blue);
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 8px;
+      margin: 0.8rem 0;
+      border: 1px solid rgba(100, 255, 218, 0.2);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.7rem;
+      margin: 0.8rem 0;
+    }
+
+    .info-item {
+      background: rgba(100, 255, 218, 0.05);
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      text-align: center;
+      border: 1px solid rgba(100, 255, 218, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+    }
+
+    body.light-theme .info-item {
+      background: rgba(0, 122, 122, 0.05);
+      border: 1px solid rgba(0, 122, 122, 0.1);
+    }
+
+    /* Button */
+    .btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: transparent;
+      color: var(--light-blue);
+      border: 1px solid var(--light-blue);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 0.8rem;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      background: rgba(100, 255, 218, 0.1);
+    }
+
+    body.light-theme .btn:hover {
+      background: rgba(0, 122, 122, 0.1);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--slate);
+      font-size: 0.85rem;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 0.8rem;
+    }
+
+    .social-btn {
+      background: transparent;
+      border: 1px solid var(--slate);
+      color: var(--slate);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-size: 1.1rem;
+    }
+
+    .social-btn:hover {
+      color: var(--light-blue);
+      border-color: var(--light-blue);
+      transform: translateY(-3px);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      h2 {
+        font-size: 1.2rem;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-item {
+        justify-content: flex-start;
+        padding: 0.5rem 0.7rem;
+      }
+      
+      .channel-item {
+        padding: 0.6rem;
+      }
+      
+      .popup-title {
+        font-size: 1.2rem;
+      }
+      
+      .popup-message {
+        font-size: 0.9rem;
+      }
+      
+      .channel-link {
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 350px) {
+      h1 {
+        font-size: 1.3rem;
+      }
+      
+      .container {
+        padding: 1rem;
+      }
+      
+      .card {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Popup Overlay -->
+  <div class="popup-overlay" id="popupOverlay" style="display: none;">
+    <div class="popup-content">
+      <button class="popup-close" id="popupClose">
+        <i class="bi bi-x"></i>
+      </button>
+      <h2 class="popup-title">Important Notice</h2>
+      <div class="popup-message">
+        ᴘʟᴇᴀsᴇ ᴊᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ ғᴏʀ ғᴜʀᴛʜᴇʀ ᴜᴘᴅᴀᴛᴇs 😈
+      </div>
+      <div class="channel-list">
+        <div class="channel-item">
+          <i class="bi bi-telegram channel-icon"></i>
+          <a href="https://t.me/Hidden_Officials_5" class="channel-link" target="_blank">𝗛𝗜𝗗𝗗𝗘𝗡 𝗢𝗙𝗙𝗜𝗖𝗜𝗔𝗟𝗦</a>
+        </div>
+        <div class="channel-item">
+          <i class="bi bi-megaphone channel-icon"></i>
+          <a href="https://t.me/+0zXl08cOiaE1MjI9" class="channel-link" target="_blank">BACKUP CHANNEL 😁</a>
+        </div>
+      </div>
+      <div class="popup-note">
+        After joining, you can close this popup and continue to the website.
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <header>
+      <h1>𝐇𝐀𝐂𝐊𝐇𝐄𝐈𝐒𝐓 😈</h1>
+      <button class="theme-toggle" id="themeToggle">
+        <i class="bi bi-moon"></i>
+      </button>
+    </header>
+
+    <div class="card">
+      <div class="card-header">
+        <h1 style="color: #6FDDC5; justify-content: center; font-size:25px;">𝗔𝗟𝗜𝗘𝗡 (𝗝𝗔𝗗𝗨)🔥</h1>
+      </div>
+      <img src="https://i.ibb.co/8TgdrFJ/x.jpg" alt="Alien">
+      <button class="btn" onclick="window.location.href='https://mits-ak.github.io/aknews/'">
+        <i class="bi bi-book"></i>𝐋𝐄𝐓'𝐒 𝐒𝐓𝐔𝐃𝐘
+      </button>
+    </div>
+
+<div class="card">
+      <div class="card-header">
+        <h1 style="color: #FF67A7; justify-content: center; font-size:25px;">𝗔𝗣𝗡𝗜 𝗞𝗔𝗞𝗦𝗛𝗔 🥰</h1>
+      </div>
+      <img src="https://i.ibb.co/cX2G1kxd/x.jpg" alt="Apnikaksha">
+      <button class="btn" onclick="window.location.href='https://mits-ak.github.io/aknews/'">
+        <i class="bi bi-book"></i> 𝐋𝐄𝐓'𝐒 𝐒𝐓𝐔𝐃𝐘
+      </button>
+    </div>
+
+<div class="card">
+      <div class="card-header">
+        <h1 style="color: #B7FFAD; justify-content: center; font-size:25px;">𝗘𝗦𝗔𝗥𝗔𝗟 🐨</h1>
+      </div>
+      <img src="https://i.ibb.co/ns66BndN/x.jpg" alt="Esaral">
+      <button class="btn" onclick="window.location.href='https://mits-ak.github.io/aknews/'">
+        <i class="bi bi-book"></i> 𝐋𝐄𝐓'𝐒 𝐒𝐓𝐔𝐃𝐘
+      </button>
+    </div>
+
+<div class="card">
+      <div class="card-header">
+        <h1 style="color: #FFD185; justify-content: center; font-size:25px;">𝐏𝐑𝐄𝐌𝐈𝐔𝐌 𝐍𝐎𝐓𝐄𝐒 </h1>
+      </div>
+      <img src="https://i.ibb.co/vxDbQ1Qx/x.jpg" alt="Notes">
+      <button class="btn" onclick="window.location.href='https://mits-ak.github.io/aknews/'">
+        <i class="bi bi-book"></i>𝐋𝐄𝐓'𝐒 𝐒𝐓𝐔𝐃𝐘
+      </button>
+    </div>
+    <footer>
+      <p>Created by <strong>𝗛𝗔𝗖𝗞𝗛𝗘𝗜𝗦𝗧 😁</strong> | 𝐓𝐞𝐚𝐦 𝐎𝐏𝐓𝐄𝐂𝐇</p>
+      <div class="social-links">
+        <button class="social-btn" onclick="window.open('https://t.me/HACKHEISTBOT', '_blank')">
+          <i class="bi bi-telegram"></i>
+        </button>
+        <button class="social-btn" onclick="window.open('https://t.me/HIDDEN_officials_5', '_blank')">
+          <i class="bi bi-people"></i>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Popup Handling
+    const popupOverlay = document.getElementById('popupOverlay');
+    const popupClose = document.getElementById('popupClose');
+    
+    // Show popup when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if user has already seen the popup
+      const hasSeenPopup = localStorage.getItem('hasSeenPopup');
+      if (!hasSeenPopup) {
+        popupOverlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+      
+      // Check if mobile device
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        document.body.style.fontSize = '14px';
+      }
+    });
+    
+    // Close popup
+    popupClose.addEventListener('click', () => {
+      popupOverlay.style.display = 'none';
+      document.body.style.overflow = 'auto';
+      localStorage.setItem('hasSeenPopup', 'true');
+    });
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const icon = themeToggle.querySelector('i');
+    
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-theme');
+      icon.classList.replace('bi-moon', 'bi-sun');
+    }
+    
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-theme');
+      if (document.body.classList.contains('light-theme')) {
+        icon.classList.replace('bi-moon', 'bi-sun');
+        localStorage.setItem('theme', 'light');
+      } else {
+        icon.classList.replace('bi-sun', 'bi-moon');
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+
+    // Navigation
+    function navigateTo(url) {
+      document.body.style.opacity = '0';
+      document.body.style.transition = 'opacity 0.3s ease';
+      setTimeout(() => {
+        window.location.href = url;
+      }, 300);
+    }
+
+    window.addEventListener('pageshow', () => {
+      document.body.style.opacity = '1';
+    });
+    
+    // Handle mobile viewport
+    function handleViewport() {
+      const viewport = document.querySelector('meta[name="viewport"]');
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+      }
+    }
+    
+    handleViewport();
+  </script>
+</body>
+</html>
